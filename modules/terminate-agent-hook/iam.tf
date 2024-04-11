@@ -121,6 +121,9 @@ data "aws_iam_policy_document" "lambda" {
 data "aws_iam_policy_document" "spot_request_housekeeping" {
   # checkov:skip=CKV_AWS_111:I didn't found any condition to limit the access.
   # checkov:skip=CKV_AWS_356:False positive and fixed with version 2.3.293
+
+  count  = var.spot_request_enabled ? 1 : 0
+
   statement {
     sid = "SpotRequestHousekeepingList"
 
@@ -148,14 +151,18 @@ resource "aws_iam_role_policy_attachment" "lambda" {
 }
 
 resource "aws_iam_policy" "spot_request_housekeeping" {
+  count  = var.spot_request_enabled ? 1 : 0
+
   name   = "${var.name_iam_objects}-${var.name}-cancel-spot"
   path   = "/"
-  policy = data.aws_iam_policy_document.spot_request_housekeeping.json
+  policy = data.aws_iam_policy_document.spot_request_housekeeping[0].json
 
   tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "spot_request_housekeeping" {
+  count  = var.spot_request_enabled ? 1 : 0
+
   role       = aws_iam_role.lambda.name
-  policy_arn = aws_iam_policy.spot_request_housekeeping.arn
+  policy_arn = aws_iam_policy.spot_request_housekeeping[0].arn
 }

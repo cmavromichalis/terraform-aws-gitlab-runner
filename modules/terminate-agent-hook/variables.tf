@@ -60,3 +60,9 @@ variable "enable_xray_tracing" {
   type        = bool
   default     = false
 }
+
+variable "spot_request_enabled" {
+  description = "Set to false when terminate-agent-hook does not need to handle spot instances."
+  type        = bool
+  default     = true
+}
